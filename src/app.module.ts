@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ChatController } from './chat.controller';
 import { ChatService } from './services/chat.service';
 import { ConfigModule } from '@nestjs/config';
+import { OpenAiService } from './services/openai.service';
+import { DatabaseModule } from '@app/database';
 
 @Module({
   imports: [
@@ -9,8 +11,9 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    DatabaseModule,
   ],
   controllers: [ChatController],
-  providers: [ChatService],
+  providers: [ChatService, OpenAiService],
 })
 export class AppModule {}

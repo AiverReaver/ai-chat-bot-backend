@@ -1,22 +1,37 @@
 import { Injectable } from "@nestjs/common";
-import OpenAI from "openai";
+import { OpenAiService } from "./openai.service";
+import { ConversationRepository, MessageRepository } from "@app/database";
 
 @Injectable()
 export class ChatService {
-    private openai: OpenAI;
 
-    constructor() {
-        this.openai = new OpenAI({
-            apiKey: process.env.OPENAI_API_KEY,
-        });
+    constructor(private readonly openaiService: OpenAiService, 
+        private readonly messageRepo: MessageRepository, 
+        private readonly conversationRepo: ConversationRepository) {
     }
 
-    async processMessage(message: string): Promise<string> {
-        const response = await this.openai.responses.create({
-            model: "gpt-3.5-turbo",
-            input: "hello from nestjs"
-        })
+    async processMessage(message: string): Promise<{reply: string, conversationId: string}> {
+        const conversation =  await this.conversationRepo.create({})
 
-        return response.output_text;
+        const msg = await this.messageRepo.create({
+            conversation: conversation,
+            sender: 'user',
+            text: message
+        });
+        const response = await this.openaiService.ask(message);
+        const botMsg = await this.messageRepo.create({
+            conversation: conversation,
+            sender: 'bot',
+            text: response
+        });
+
+        this.conversationRepo.persist(conversation);
+        this.messageRepo.persist([msg, botMsg]);
+        await this.messageRepo.flush();
+
+        return {
+            reply: response,
+            conversationId: conversation.id
+        }
     }
 }
