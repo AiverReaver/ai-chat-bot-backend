@@ -12,7 +12,7 @@ export class OpenAiService {
     });
   }
 
-  async ask(prompt: { role: string, content: string }[]): Promise<string> {
+  async ask(prompt: { role: 'user' | 'assistant' | 'system' | 'developer', content: string }[]): Promise<string> {
     const response = await this.openai.responses.create({
       model: process.env.AI_MODEL || 'gpt-4-turbo',
       input: [

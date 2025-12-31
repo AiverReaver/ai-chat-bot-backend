@@ -1,4 +1,4 @@
-export const chatContext = {
+export const chatContext : { role: 'system', content: string } = {
     role: "system",
     content: `
 You are a customer support assistant for Ashish Store.
