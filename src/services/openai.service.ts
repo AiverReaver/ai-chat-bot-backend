@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import OpenAI from 'openai';
+import { chatContext } from 'src/constant';
 
 @Injectable()
 export class OpenAiService {
@@ -11,10 +12,13 @@ export class OpenAiService {
     });
   }
 
-  async ask(prompt: string): Promise<string> {
+  async ask(prompt: { role: string, content: string }[]): Promise<string> {
     const response = await this.openai.responses.create({
-      model: 'gpt-3.5-turbo',
-      input: prompt,
+      model: process.env.AI_MODEL || 'gpt-4-turbo',
+      input: [
+        chatContext,
+        ...prompt
+      ],
     });
 
     return response.output_text;

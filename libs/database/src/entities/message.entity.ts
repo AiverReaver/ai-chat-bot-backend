@@ -12,7 +12,7 @@ export class Message {
   conversation!: Conversation;
 
   @Property({ type: 'text', name: 'sender' })
-  sender!: 'user' | 'bot';
+  sender!: 'user' | 'assistant';
 
   @Property({ type: 'text', name: 'text' })
   text!: string;
