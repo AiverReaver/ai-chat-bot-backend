@@ -20,6 +20,9 @@ importers:
       '@mikro-orm/postgresql':
         specifier: ^6.6.2
         version: 6.6.2(@mikro-orm/core@6.6.2)
+      '@nestjs/cli':
+        specifier: ^11.0.0
+        version: 11.0.14(@swc/cli@0.6.0(@swc/core@1.15.8)(chokidar@4.0.3))(@swc/core@1.15.8)(@types/node@22.19.3)
       '@nestjs/common':
         specifier: ^11.0.1
         version: 11.1.11(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -57,9 +60,6 @@ importers:
       '@mikro-orm/cli':
         specifier: ^6.6.2
         version: 6.6.2(pg@8.16.3)
-      '@nestjs/cli':
-        specifier: ^11.0.0
-        version: 11.0.14(@swc/cli@0.6.0(@swc/core@1.15.8)(chokidar@4.0.3))(@swc/core@1.15.8)(@types/node@22.19.3)
       '@nestjs/schematics':
         specifier: ^11.0.0
         version: 11.0.9(chokidar@4.0.3)(typescript@5.9.3)
