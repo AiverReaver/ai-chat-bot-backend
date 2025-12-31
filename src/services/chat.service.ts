@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { OpenAiService } from "./openai.service";
 import { Conversation, ConversationRepository, Message, MessageRepository } from "@app/database";
-import { } from '@mikro-orm/core';
+import { CreateConversationResponseDto, GetConversationResponseDto, HandleMessageInputDto, HandleMessageResponseDto } from "src/dto/chat.dto";
 
 @Injectable()
 export class ChatService {
@@ -11,7 +11,7 @@ export class ChatService {
         private readonly conversationRepo: ConversationRepository) {
     }
 
-    async processMessage(input: { message: string, conversationId: string }): Promise<{ id: string, reply: string, conversationId: string }> {
+    async processMessage(input: HandleMessageInputDto): Promise<HandleMessageResponseDto> {
         const { message, conversationId } = input;
 
         let conversation: Conversation;
@@ -22,7 +22,7 @@ export class ChatService {
         } else {
             conversation = await this.conversationRepo.findOne({ id: conversationId } );
         }
-        const messages = await this.messageRepo.findAll({ where: { conversation: { id: conversation.id } }, limit: 100, orderBy: { createdAt: 'ASC' } });
+        const messages = await this.messageRepo.findAll({ where: { conversation: { id: conversation.id } }, limit: 20, orderBy: { createdAt: 'ASC' } });
 
         const conversationContext = messages.map(msg => ({ role: msg.sender, content: msg.text }));
 
@@ -52,14 +52,14 @@ export class ChatService {
 
     }
 
-    async createConversation(): Promise<{ id: string }> {
+    async createConversation(): Promise<CreateConversationResponseDto> {
         const conversation = await this.conversationRepo.create({});
         this.conversationRepo.persist(conversation);
         await this.conversationRepo.flush();
         return conversation;
     }
 
-    async getConversationById(id: string): Promise<{ messages: Message[] }> {
+    async getConversationById(id: string): Promise<GetConversationResponseDto> {
         const messages = await this.messageRepo.findAll({ where: { conversation: { id } } });
         return { messages };
     }
