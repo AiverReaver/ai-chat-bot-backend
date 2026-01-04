@@ -19,7 +19,7 @@ COPY . .
 
 RUN pnpm run build
 
-RUN pnpm prune --prod
+# RUN pnpm prune --prod
 
 FROM node:25.2-bullseye-slim AS runner
 
@@ -29,9 +29,11 @@ COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/.env ./
 COPY package*.json ./
+COPY tsconfig.json ./
+COPY libs/database ./libs/database
 
 USER node
 
 EXPOSE 3009
 
-CMD ["node", "dist/main.js"]
+CMD ["sh", "-c", "npx mikro-orm migration:up --config=./libs/database/src/datastore/mikro-orm.config.ts && node dist/main.js"]
